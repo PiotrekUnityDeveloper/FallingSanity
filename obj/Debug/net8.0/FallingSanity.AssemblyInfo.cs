@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FallingSanity")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3d56a8a2beb90bbb09e257c64b390d21970542e3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6cc1d3c8a7047c10b17f3c0c5b4662619a9d4fbf")]
 [assembly: System.Reflection.AssemblyProductAttribute("FallingSanity")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FallingSanity")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
