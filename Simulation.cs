@@ -159,11 +159,14 @@ namespace MyApp
 
             if (!canDisplace) return false;
 
-            _grid.Set(fromX, fromY, target);
-            _grid.Set(toX, toY, mover);
+            if(!test)
+            {
+                _grid.Set(fromX, fromY, target);
+                _grid.Set(toX, toY, mover);
 
-            _renderer.UpdatePixel(fromX, fromY, target);
-            _renderer.UpdatePixel(toX, toY, mover);
+                _renderer.UpdatePixel(fromX, fromY, target);
+                _renderer.UpdatePixel(toX, toY, mover);
+            }
 
             return true;
         }
@@ -175,7 +178,7 @@ namespace MyApp
 
             if (!_grid.InBounds(toX, toY)) return false;
 
-            Point[] path = GetLineTraversePositionsBR(fromX, fromY, toX, toY);
+            Point[] path = GetLineTraversalPositionsDDA(fromX, fromY, toX, toY);
 
             int currentX = fromX;
             int currentY = fromY;
@@ -194,64 +197,7 @@ namespace MyApp
             return true; // path end
         }
 
-        private Point[] GetLineTraversePositionsBR(int startX, int startY, int endX, int endY)
-        {
-            /// formula
-            /// (dx, dy) = (ix + 1, iy - 1/2) - (x0, y0)
-            /// // i want to kill myself
-             
-            int currentX = startX;
-            int currentY = startY;
-
-            int looplength = (Math.Abs(startX - endX) > Math.Abs(startY - endY)) ? Math.Abs(startX - endX) : Math.Abs(startY - endY);
-
-            Point[] positions = new Point[looplength];
-
-            for (int i = 0; i < looplength; i++)
-            {
-                currentX = startX + i;
-                currentY = startY + i;
-                Point nextPos = new Point((currentX + 1) - startX, (currentY + 1/2) - startY);
-                positions[i] = nextPos;
-            }
-
-            return positions;
-        }
-
-        private Point[] IfThisDoesntWorkImUninstalling(int startX, int startY, int endX, int endY)
-        {
-            // calculate the direction
-            int xdev = 0;
-            int ydev = 0;
-
-            if(startX - endX < 0) { xdev = 1; }
-            else if(startX - endX > 0) { xdev = -1; }
-            else { xdev = 0; }
-
-            if (startY - endY < 0) { ydev = 1; }
-            else if (startY - endY > 0) { ydev = -1; }
-            else { ydev = 0; }
-
-            int xLength = Math.Abs(startX - endX);
-            int yLength = Math.Abs(startY - endY);
-            int looplength = (xLength > yLength) ? xLength + 1 : yLength + 1;
-            bool xLonger = (xLength > yLength) ? true : false;
-            Point[] points = new Point[looplength];
-
-            int currentX = startX;
-            int currentY = startY;
-
-            for (int i = 0; i < looplength; i++)
-            {
-                currentX = currentX + (xLonger == true ? (1) : (1 / (yLength / xLength))) * xdev;
-                currentY = currentY + (xLonger == false ? (1) : (1 / (xLength / yLength))) * ydev;
-                points[i] = new Point(currentX, currentY);
-            }
-
-            return points;
-        }
-
-        private Point[] GetLineTraversePositionsBR(int startX, int endX, int startY, int endY) 
+        private Point[] GetLineTraversalPositionsDDA(int startX, int endX, int startY, int endY) 
         {
             float xLength, yLength;
             xLength = Math.Abs(startX - endX);
@@ -278,43 +224,9 @@ namespace MyApp
             return points;
         }
 
-        private Point[] GetLineTraversePositions(int startX, int startY, int endX, int endY)
-        {
-            var points = new List<Point>();
-
-            int dx = Math.Abs(endX - startX);
-            int dy = Math.Abs(endY - startY);
-            int stepX = endX > startX ? 1 : -1;
-            int stepY = endY > startY ? 1 : -1;
-
-            int x = startX;
-            int y = startY;
-            int error = dx - dy;
-
-            while (true)
-            {
-                points.Add(new Point(x, y));
-                if (x == endX && y == endY) break;
-
-                int error2 = 2 * error;
-                if (error2 > -dy)
-                {
-                    error -= dy;
-                    x += stepX;
-                }
-                if (error2 < dx)
-                {
-                    error += dx;
-                    y += stepY;
-                }
-            }
-
-            return points.ToArray();
-        }
-
         private Point[] GetLineTraversePositionsSC(int startX, int startY, int endX, int endY)
         {
-            //idk
+            //todo
 
             return new Point[1]
             {
