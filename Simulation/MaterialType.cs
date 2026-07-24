@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace MyApp
+namespace FallingSanity.Simulation
 {
     /// <summary>
     /// material index list

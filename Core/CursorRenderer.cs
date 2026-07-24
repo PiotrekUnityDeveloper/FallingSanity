@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace MyApp
+namespace FallingSanity.Core
 {
     /// <summary>
     /// Draws a circular outline at the mouse position showing the current
@@ -14,7 +14,7 @@ namespace MyApp
     /// </summary>
     public class CursorRenderer
     {
-        private const int Segments = 32;
+        private const int Segments = 8;
 
         private readonly Texture2D _pixel;
 
@@ -27,7 +27,7 @@ namespace MyApp
         public void Draw(SpriteBatch spriteBatch, int centerX, int centerY, float radius, Color color, float thickness = 1.5f)
         {
             var center = new Vector2(centerX, centerY);
-            var previous = center + new Vector2(radius, 0);
+            var previous = center + new Vector2(radius - 1, 0);
 
             for (int i = 1; i <= Segments; i++)
             {

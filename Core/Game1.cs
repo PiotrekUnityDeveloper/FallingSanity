@@ -1,23 +1,29 @@
-﻿using Microsoft.Xna.Framework;
+﻿using FallingSanity.Rendering;
+using FallingSanity.Settings;
+using FallingSanity.Simulation;
+using FallingSanity.UI;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace MyApp
+namespace FallingSanity.Core
 {
     public class Game1 : Game
     {
         // World is simulated at low resolution and scaled up — same idea Noita uses.
-        private const int CellSize = 4;
-        private const int WorldWidth = 320;
-        private const int WorldHeight = 180;
+        private int CellSize = 4;
+        private int WorldWidth = 320; //world width in cells
+        private int WorldHeight = 180; //world height in cells
+        private int ChunkSize = 32; //chunk size in cells
 
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
         private Grid _grid;
+        private ChunkManager _chunkManager;
         private WorldRenderer _worldRenderer;
         private InputHandler _inputHandler;
-        private Simulation _simulation;
+        private FallingSanity.Simulation.Simulation _simulation;
         private CursorRenderer _brushCursor;
         private ImGuiRenderer _imGuiRenderer;
         private MaterialSelectorUI _materialSelector;
@@ -28,6 +34,12 @@ namespace MyApp
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
 
+            //set the world settings
+            CellSize = WorldSettings.DefaultWorldCellSize;
+            WorldWidth = WorldSettings.DefaultWorldWidth;
+            WorldHeight = WorldSettings.DefaultWorldHeight;
+            ChunkSize = WorldSettings.DefaultWorldChunkSize;
+
             _graphics.PreferredBackBufferWidth = WorldWidth * CellSize;
             _graphics.PreferredBackBufferHeight = WorldHeight * CellSize;
         }
@@ -35,6 +47,7 @@ namespace MyApp
         protected override void Initialize()
         {
             _grid = new Grid(WorldWidth, WorldHeight);
+            _chunkManager = new ChunkManager(_grid, WorldWidth, WorldHeight, ChunkSize);
             base.Initialize();
         }
 
@@ -46,7 +59,7 @@ namespace MyApp
             _worldRenderer.Refresh();
 
             _inputHandler = new InputHandler(_grid, _worldRenderer, brushRadius: 3);
-            _simulation = new Simulation(_grid, _worldRenderer);
+            _simulation = new FallingSanity.Simulation.Simulation(_grid, _chunkManager, _worldRenderer);
             _brushCursor = new CursorRenderer(GraphicsDevice);
 
             _imGuiRenderer = new ImGuiRenderer(this);

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using FallingSanity.Rendering;
 using ImGuiNET;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace MyApp
+namespace FallingSanity.UI
 {
     /// <summary>
     /// Bridges Dear ImGui to MonoGame. ImGui.NET is only the C# binding to
@@ -38,9 +39,9 @@ namespace MyApp
         private IndexBuffer _indexBuffer;
         private int _indexBufferSize;
 
-        private readonly Dictionary<IntPtr, Texture2D> _loadedTextures = new();
+        private readonly Dictionary<nint, Texture2D> _loadedTextures = new();
         private int _textureId;
-        private IntPtr? _fontTextureId;
+        private nint? _fontTextureId;
 
         private int _scrollWheelValue;
         private int _horizontalScrollWheelValue;
@@ -79,7 +80,7 @@ namespace MyApp
             io.Fonts.GetTexDataAsRGBA32(out byte* pixelData, out int width, out int height, out int bytesPerPixel);
 
             var pixels = new byte[width * height * bytesPerPixel];
-            Marshal.Copy(new IntPtr(pixelData), pixels, 0, pixels.Length);
+            Marshal.Copy(new nint(pixelData), pixels, 0, pixels.Length);
 
             var texture = new Texture2D(_graphicsDevice, width, height, false, SurfaceFormat.Color);
             texture.SetData(pixels);
@@ -95,14 +96,14 @@ namespace MyApp
         /// Registers a Texture2D with ImGui so it can be drawn via
         /// ImGui.Image(...). Returns the handle ImGui uses to refer to it.
         /// </summary>
-        public IntPtr BindTexture(Texture2D texture)
+        public nint BindTexture(Texture2D texture)
         {
-            var id = new IntPtr(_textureId++);
+            var id = new nint(_textureId++);
             _loadedTextures.Add(id, texture);
             return id;
         }
 
-        public void UnbindTexture(IntPtr textureId) => _loadedTextures.Remove(textureId);
+        public void UnbindTexture(nint textureId) => _loadedTextures.Remove(textureId);
 
         /// <summary>Call at the very start of Draw, before any ImGui.* calls this frame.</summary>
         public void BeforeLayout(GameTime gameTime)

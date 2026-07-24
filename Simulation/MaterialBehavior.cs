@@ -1,4 +1,4 @@
-﻿namespace MyApp
+﻿namespace FallingSanity.Simulation
 {
     /// <summary>
     /// Broad category of simulation behavior. New materials plug into one of
@@ -13,6 +13,7 @@
         Powder,  // falls straight down / diagonally: sand, dust
         Liquid,  // falls and spreads sideways: water, oil, lava
         Gas,     // rises and disperses: steam, smoke
+        SolidGas,// the default atmosphere medium. spreads into empty neighbor cells
         Dust,    // like Powder but lighter, disperses more: ash, spores
     }
 }

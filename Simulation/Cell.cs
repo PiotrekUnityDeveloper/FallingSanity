@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace MyApp
+namespace FallingSanity.Simulation
 {
     /// <summary>
     /// Per-pixel instance data — what actually lives in the Grid array.
@@ -10,10 +10,12 @@ namespace MyApp
     /// </summary>
     public struct Cell
     {
-        public MaterialType MaterialId;  // which material this pixel is
-        public byte HP;                  // this pixel's remaining durability
-        public Color Color;              // baked-in render color (with per-pixel variance)
-        public byte Temperature;         // current temperature, 0-255 scale
+        public MaterialType MaterialId;  // currently occupying material
+        public byte HP;                  // remaining durability. used along with material toughness
+        public Color Color;              // very basic rendering
+        public float Temperature;        // temperature
+        public float Pressure;           // pressure
+        private bool IsActive { get; set; }
 
         // Hardcoded (not pulled from MaterialDatabase) so Cell has no static
         // dependency on MaterialDatabase — avoids a static-init ordering issue.
@@ -23,7 +25,7 @@ namespace MyApp
             MaterialId = MaterialType.Empty,
             HP = 0,
             Color = new Color(12, 12, 16),
-            Temperature = 20
+            Temperature = 20f,
         };
     }
 }

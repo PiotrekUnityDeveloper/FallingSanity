@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace MyApp
+namespace FallingSanity.Simulation
 {
     /// <summary>
     /// Per-material static data — one instance per material TYPE, not per

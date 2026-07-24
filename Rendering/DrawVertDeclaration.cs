@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 
-namespace MyApp
+namespace FallingSanity.Rendering
 {
     /// <summary>
     /// Describes the memory layout of ImGui's ImDrawVert struct (position,

@@ -1,7 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
+using FallingSanity;
 using System;
 
-namespace MyApp
+namespace FallingSanity.Core
 {
     internal class Program
     {

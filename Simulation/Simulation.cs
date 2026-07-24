@@ -1,9 +1,12 @@
-﻿using FallingSanity;
+﻿using FallingSanity.Core;
+using FallingSanity.Rendering;
+using FallingSanity.Settings;
+using FallingSanity.Util;
 using Microsoft.Xna.Framework;
 using System;
 using System.Runtime.CompilerServices;
 
-namespace MyApp
+namespace FallingSanity.Simulation
 {
     /// <summary>
     /// Layer 1 of the material sim: generic movement driven purely by each
@@ -21,15 +24,17 @@ namespace MyApp
     public class Simulation
     {
         private readonly Grid _grid;
+        private readonly ChunkManager _chunkManager;
         private readonly WorldRenderer _renderer;
         private readonly Random _rng = new Random();
 
         // Alternated each tick so nothing systematically drifts left or right.
         private bool _sweepLeftToRight;
 
-        public Simulation(Grid grid, WorldRenderer renderer)
+        public Simulation(Grid grid, ChunkManager chunkManager, WorldRenderer renderer)
         {
             _grid = grid;
+            _chunkManager = chunkManager;
             _renderer = renderer;
         }
 
@@ -40,6 +45,7 @@ namespace MyApp
         /// </summary>
         public void Step()
         {
+            /*
             _sweepLeftToRight = !_sweepLeftToRight;
 
             for (int y = _grid.Height - 1; y >= 0; y--)
@@ -53,6 +59,64 @@ namespace MyApp
                 {
                     for (int x = _grid.Width - 1; x >= 0; x--)
                         StepCell(x, y);
+                }
+            }*/
+
+            //compute the chunks in a chessboard pattern
+
+            Chunk[] chunks = _chunkManager.GetChunks();
+
+            // compute the even index number chunks first
+            for (int i = 0; i < chunks.Length; i++)
+            {
+                if(i % 2 == 0)
+                {
+                    if (chunks[i].IsActive)
+                    {
+                        // iterate through the contained cells
+                        for (int k = WorldSettings.DefaultWorldChunkSize - 1; k >= 0; k--) //rows
+                        {
+                            for (int j = 0; j < WorldSettings.DefaultWorldChunkSize; j++) //columns
+                            {
+                                Point chunkPos = ChunkManager.ChunkPosFromIndex(i);
+                                Point chunkcellPos = ChunkManager.ChunkPosToCellPos(chunkPos.X, chunkPos.Y);
+                                StepCell(chunkcellPos.X + k, chunkcellPos.Y + j);
+                            }
+                        }
+                    }
+                    else if (chunks[i].ActiveNextFrame)
+                    {
+                        /// set this chunk to be active, but skip iteration for this frame
+                        /// (it will iterate next simulation step)
+                        chunks[i].IsActive = true;
+                    }
+                }
+            }
+
+            // odd
+            for (int i = 0; i < chunks.Length; i++)
+            {
+                if (i % 2 == 1)
+                {
+                    if (chunks[i].IsActive)
+                    {
+                        // iterate through the contained cells
+                        for (int k = WorldSettings.DefaultWorldChunkSize - 1; k >= 0; k--) //rows
+                        {
+                            for (int j = 0; j < WorldSettings.DefaultWorldChunkSize; j++) //columns
+                            {
+                                Point chunkPos = ChunkManager.ChunkPosFromIndex(i);
+                                Point chunkcellPos = ChunkManager.ChunkPosToCellPos(chunkPos.X, chunkPos.Y);
+                                StepCell(chunkcellPos.X + k, chunkcellPos.Y + j);
+                            }
+                        }
+                    }
+                    else if (chunks[i].ActiveNextFrame)
+                    {
+                        /// set this chunk to be active, but skip iteration for this frame
+                        /// (it will iterate next simulation step)
+                        chunks[i].IsActive = true;
+                    }
                 }
             }
         }
@@ -178,7 +242,7 @@ namespace MyApp
 
             if (!_grid.InBounds(toX, toY)) return false;
 
-            Point[] path = GetLineTraversalPositionsDDA(fromX, fromY, toX, toY);
+            Point[] path = GridHelper.GetLineTraversalPositionsDDA(fromX, fromY, toX, toY);
 
             int currentX = fromX;
             int currentY = fromY;
@@ -197,41 +261,6 @@ namespace MyApp
             return true; // path end
         }
 
-        private Point[] GetLineTraversalPositionsDDA(int startX, int endX, int startY, int endY) 
-        {
-            float xLength, yLength;
-            xLength = Math.Abs(startX - endX);
-            yLength = Math.Abs(startY - endY);
-
-            float currentX = startX;
-            float currentY = startY;
-
-            int difference = (int)Math.Abs(xLength - yLength);
-            int looplength = (int)Math.Max(xLength, yLength);
-
-            if(looplength == 0) { return new Point[] { new Point(startX, startY) }; }
-
-            Point[] points = new Point[looplength];
-
-            for (int i = 0; i < looplength; i++)
-            {
-                points[i] = new Point((int)Math.Round(currentX), (int)Math.Round(currentY));
-
-                if(xLength != 0) currentX = (currentX + (xLength / looplength) * Math.Sign(endX - startX));
-                if(yLength != 0) currentY = (currentY + (yLength / looplength) * Math.Sign(endY - startY));
-            }
-
-            return points;
-        }
-
-        private Point[] GetLineTraversePositionsSC(int startX, int startY, int endX, int endY)
-        {
-            //todo
-
-            return new Point[1]
-            {
-                new Point(0, 0),
-            };
-        }
+        
     }
 }

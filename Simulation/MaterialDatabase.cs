@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
-namespace MyApp
+namespace FallingSanity.Simulation
 {
     /// <summary>
     /// Registry of per-material static data (MaterialDefinition), indexed by

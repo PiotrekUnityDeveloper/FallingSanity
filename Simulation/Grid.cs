@@ -1,4 +1,4 @@
-﻿namespace MyApp
+﻿namespace FallingSanity.Simulation
 {
     /// <summary>
     /// Pure data container for the world: one Cell per cell, flat-packed

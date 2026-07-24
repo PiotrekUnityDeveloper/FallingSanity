@@ -1,7 +1,9 @@
 ﻿using System.Numerics;
+using FallingSanity.Core;
+using FallingSanity.Simulation;
 using ImGuiNET;
 
-namespace MyApp
+namespace FallingSanity.UI
 {
     /// <summary>
     /// A Dear ImGui panel for picking the active material with the mouse

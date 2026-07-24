@@ -1,7 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using FallingSanity.Simulation;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace MyApp
+namespace FallingSanity.Rendering
 {
     /// <summary>
     /// Renders the Grid as one pixel-per-cell texture, scaled up on the GPU.
