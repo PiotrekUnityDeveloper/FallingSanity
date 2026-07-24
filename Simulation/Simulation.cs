@@ -62,61 +62,32 @@ namespace FallingSanity.Simulation
                 }
             }*/
 
-            //compute the chunks in a chessboard pattern
-
+            //compute the chunks in a checkerboard pattern
             Chunk[] chunks = _chunkManager.GetChunks();
 
-            // compute the even index number chunks first
             for (int i = 0; i < chunks.Length; i++)
             {
-                if(i % 2 == 0)
+                Point chunkPos = ChunkManager.ChunkPosFromIndex(i);
+
+                //if (((chunkPos.X + chunkPos.Y) % 2) != parity) continue;
+
+                if (chunks[i].IsActive)
                 {
-                    if (chunks[i].IsActive)
+                    Point chunkCellPos = ChunkManager.ChunkPosToCellPos(chunkPos.X, chunkPos.Y);
+
+                    // rows (Y) bottom-to-top so a cell that falls into an
+                    // already-processed row isn't moved again this tick
+                    for (int row = WorldSettings.DefaultWorldChunkSize - 1; row >= 0; row--)
                     {
-                        // iterate through the contained cells
-                        for (int k = WorldSettings.DefaultWorldChunkSize - 1; k >= 0; k--) //rows
+                        for (int col = 0; col < WorldSettings.DefaultWorldChunkSize; col++)
                         {
-                            for (int j = 0; j < WorldSettings.DefaultWorldChunkSize; j++) //columns
-                            {
-                                Point chunkPos = ChunkManager.ChunkPosFromIndex(i);
-                                Point chunkcellPos = ChunkManager.ChunkPosToCellPos(chunkPos.X, chunkPos.Y);
-                                StepCell(chunkcellPos.X + k, chunkcellPos.Y + j);
-                            }
+                            StepCell(chunkCellPos.X + col, chunkCellPos.Y + row);
                         }
-                    }
-                    else if (chunks[i].ActiveNextFrame)
-                    {
-                        /// set this chunk to be active, but skip iteration for this frame
-                        /// (it will iterate next simulation step)
-                        chunks[i].IsActive = true;
                     }
                 }
-            }
-
-            // odd
-            for (int i = 0; i < chunks.Length; i++)
-            {
-                if (i % 2 == 1)
+                else if (chunks[i].ActiveNextFrame)
                 {
-                    if (chunks[i].IsActive)
-                    {
-                        // iterate through the contained cells
-                        for (int k = WorldSettings.DefaultWorldChunkSize - 1; k >= 0; k--) //rows
-                        {
-                            for (int j = 0; j < WorldSettings.DefaultWorldChunkSize; j++) //columns
-                            {
-                                Point chunkPos = ChunkManager.ChunkPosFromIndex(i);
-                                Point chunkcellPos = ChunkManager.ChunkPosToCellPos(chunkPos.X, chunkPos.Y);
-                                StepCell(chunkcellPos.X + k, chunkcellPos.Y + j);
-                            }
-                        }
-                    }
-                    else if (chunks[i].ActiveNextFrame)
-                    {
-                        /// set this chunk to be active, but skip iteration for this frame
-                        /// (it will iterate next simulation step)
-                        chunks[i].IsActive = true;
-                    }
+                    chunks[i].IsActive = true;
                 }
             }
         }
